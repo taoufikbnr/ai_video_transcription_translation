@@ -21,11 +21,8 @@ export default function Home() {
   const [status, setStatus] = useState<Status>('idle');
   const [result, setResult] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
 
-    if (jobId && status === 'processing') {
-      intervalId = setInterval(async () => {
+  const fetchJob = async()=>{
         try {
           const response = await fetch(`http://localhost:8000/${jobId}`);
           const data = await response.json();
@@ -43,8 +40,13 @@ export default function Home() {
         } catch (err) {
           setStatus('error');
           setError('Failed to fetch status');
-        }
-      }, 2000);
+      }
+  }
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (jobId && status === 'processing') {
+      intervalId = setInterval(fetchJob, 2000);
     }
 
     return () => {
