@@ -41,8 +41,9 @@ async def process_video(file_path: str, target_language: str, job_id: str):
 
         translation = groq_client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
+                temperature=0.2,
                 messages=[
-                    {"role": "system", "content": f"Translate the following text to {target_language}"},
+                    {"role": "system", "content": f"Only Translate the following text to {target_language}.Maintain the original meaning and dont write anything extra:"},
                     {"role": "user", "content": result["text"]}
                 ]
             )
@@ -62,7 +63,7 @@ async def process_video(file_path: str, target_language: str, job_id: str):
 async def upload_video(file: UploadFile = File(...), target_language: str = Form(...)):
     if not file.filename.endswith('.mp4'):
         raise HTTPException(status_code=400, detail="Only MP4 files are allowed")
-    
+
     job_id = str(uuid.uuid4())
     file_path = f"uploads/{job_id}.mp4"
     
