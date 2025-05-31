@@ -2,11 +2,14 @@
 
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import os
 import uuid
 import asyncio
+from typing import Dict
 from moviepy import VideoFileClip
 
+import uvicorn
 import logging
 import whisper
 
@@ -33,7 +36,7 @@ app.add_middleware(
 
 jobs = {}
 
-async def process_video(file_path: str, job_id: str):
+async def process_video(file_path: str, target_language: str, job_id: str):
     model = whisper.load_model("base")
     try:
         # Extract audio from video
@@ -56,7 +59,7 @@ async def process_video(file_path: str, job_id: str):
         jobs[job_id] = {"status": "error","error": str(e)}
 
 @app.post("/upload")
-async def upload_video(file: UploadFile):
+async def upload_video(file: UploadFile, target_language: str):
     if not file.filename.endswith('.mp4'):
         raise HTTPException(status_code=400, detail="Only MP4 files are allowed")
     
@@ -69,11 +72,16 @@ async def upload_video(file: UploadFile):
     
     jobs[job_id] = {"status": "processing"}
     
-    asyncio.create_task(process_video(file_path,job_id))
+    # processing tasks in background to not block thread
+    asyncio.create_task(process_video(file_path, target_language, job_id))
     
     return {"job_id": job_id}
 
-
+@app.get("/{job_id}")
+async def get_job_status(job_id: str):
+    if job_id not in jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return jobs[job_id]
 
 @app.get("/")
 def read_root():
