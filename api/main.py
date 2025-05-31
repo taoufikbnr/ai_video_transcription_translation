@@ -2,18 +2,14 @@
 
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 import os
 import uuid
 import asyncio
-from typing import Dict
 from moviepy import VideoFileClip
 
-import uvicorn
 import logging
-import whisper
+from api.utils.clients import whisper_model,groq_client
 
-# Initialize Logger
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
@@ -31,13 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-
-
 jobs = {}
 
 async def process_video(file_path: str, target_language: str, job_id: str):
-    model = whisper.load_model("base")
     try:
         # Extract audio from video
         with VideoFileClip(file_path) as video:
@@ -45,11 +37,19 @@ async def process_video(file_path: str, target_language: str, job_id: str):
             video.audio.write_audiofile(audio_path)
         
         with open(audio_path, "rb"):
-            result = model.transcribe(audio_path)
+            result = whisper_model.transcribe(audio_path)
 
+        translation = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": f"Translate the following text to {target_language}"},
+                    {"role": "user", "content": result["text"]}
+                ]
+            )
         jobs[job_id] = {
             "status": "completed",
             "transcription": result["text"],
+            "translation": translation.choices[0].message.content
         }
         
         os.remove(audio_path)
