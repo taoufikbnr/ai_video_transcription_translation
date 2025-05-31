@@ -114,11 +114,10 @@ export default function Home() {
             </label>
           <Status status={status}/>
           </div>
-            <div className="mt-1 flex justify-center px-6 py-5 border-2 border-gray-300 border-dashed rounded-md">
+            <label className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 ">
+            <div className="flex justify-center px-6 py-5 border-2 border-gray-300 border-dashed rounded-md">
               <div className="">
                 <FaFileUpload className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="flex text-sm text-gray-600">
-                  <label className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 ">
                     <span>Upload a file</span>
                     <input
                       type="file"
@@ -126,15 +125,14 @@ export default function Home() {
                       accept=".mp4"
                       onChange={(e) => setFile(e.target.files?.[0] || null)}
                     />
-                  </label>
-                </div>
               </div>
             </div>
+            </label>
             <select
               value={selectedLanguage}
               required
               onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="text-black w-full py-2 border-1  border-gray-300  focus:outline-none rounded-md"
+              className="text-black w-full mt-1 py-2 border-1  border-gray-300  focus:outline-none rounded-md"
             >
               <option value="">Select a language</option>
               {languages.map((lang) => (
