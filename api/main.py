@@ -1,6 +1,6 @@
 # main.py
 
-from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, HTTPException,File,Form
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import uuid
@@ -59,7 +59,7 @@ async def process_video(file_path: str, target_language: str, job_id: str):
         jobs[job_id] = {"status": "error","error": str(e)}
 
 @app.post("/upload")
-async def upload_video(file: UploadFile, target_language: str):
+async def upload_video(file: UploadFile = File(...), target_language: str = Form(...)):
     if not file.filename.endswith('.mp4'):
         raise HTTPException(status_code=400, detail="Only MP4 files are allowed")
     
