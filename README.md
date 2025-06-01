@@ -31,16 +31,25 @@ git clone https://github.com/taoufikbnr/video_transcription_translation.git
 ```
 GROQ_API_KEY=your_groq_api_key
 ```
+3. Open cmd and run the following to install FFmpeg
+winget install "FFmpeg (Essentials Build)"
+
+4. Build and start the services:
+```bash
+docker-compose up --build
+```
 The application will run on:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
+
+
 
 ### Backend Development
 ```bash
 cd api
 python -m venv venv
 venv/bin/activate
-pip install -r requirements.txt
+pip install -r api/requirements.txt
 uvicorn api.main:app --reload
 ```
 

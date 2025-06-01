@@ -39,6 +39,7 @@ export default function Home() {
           }
         } catch (err) {
           setStatus('error');
+          console.error(err);
           setError('Failed to fetch status');
       }
   }
@@ -80,11 +81,12 @@ export default function Home() {
       setJobId(data.job_id);
       setStatus('processing');
     } catch (err) {
+      console.error(err);
       setStatus('error');
       setError('Failed to upload video');
     }
   };
-  const Status = ({status}:any) =>{
+  const Status = ({status}:StatusProps) =>{
     let color;
     switch (status) {
       case "processing":

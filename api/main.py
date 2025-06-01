@@ -6,9 +6,8 @@ import os
 import uuid
 import asyncio
 from moviepy import VideoFileClip
-
 import logging
-from api.utils.clients import whisper_model,groq_client
+from utils.clients import whisper_model,groq_client
 
 logger = logging.getLogger(__name__)
 
@@ -86,5 +85,5 @@ async def get_job_status(job_id: str):
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the AI Transcription Waiter API"}
+    return {"message": "Welcome to the AI Transcription"}
 
