@@ -6,3 +6,7 @@ declare type Results = {
     transcription: string 
     translation: string 
 }
+declare type LanguageProps = {
+  selectedLanguage:string
+  onSelect:Dispatch<React.SetStateAction<string>>
+}

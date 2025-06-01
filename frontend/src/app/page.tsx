@@ -2,17 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { FaFileUpload } from 'react-icons/fa';
-
-const languages = [
-  { value: 'spanish', label: 'Spanish' },
-  { value: 'french', label: 'French' },
-  { value: 'german', label: 'German' },
-  { value: 'italian', label: 'Italian' },
-  { value: 'portuguese', label: 'Portuguese' },
-  { value: 'japanese', label: 'Japanese' },
-  { value: 'korean', label: 'Korean' },
-  { value: 'chinese', label: 'Chinese' },
-];
+import LanguageSelector from '../components/LanguageSelector';
+import Status from '../components/Status';
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -86,24 +77,8 @@ export default function Home() {
       setError('Failed to upload video');
     }
   };
-  const Status = ({status}:StatusProps) =>{
-    let color;
-    switch (status) {
-      case "processing":
-        color = "bg-yellow-500"
-        break;
-      case "uploading":
-        color = "bg-blue-500"
-        break;
-      case "completed":
-        color = "bg-green-500"
-        break;
-      default:
-        color = "bg-gray-500"
-        break;
-    }
-    return <span className={`px-2 rounded-md ${color} text-white`} >{status}</span>
-  }
+
+
   return (
     <main className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
@@ -130,19 +105,7 @@ export default function Home() {
               </div>
             </div>
             </label>
-            <select
-              value={selectedLanguage}
-              required
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="text-black w-full mt-1 py-2 border-1  border-gray-300  focus:outline-none rounded-md"
-            >
-              <option value="">Select a language</option>
-              {languages.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
+              <LanguageSelector selectedLanguage={selectedLanguage} onSelect={setSelectedLanguage} />
           <button
             type="submit"
             disabled={!file|| !selectedLanguage || status === 'uploading' || status === 'processing'}
